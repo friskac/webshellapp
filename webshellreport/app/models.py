@@ -19,8 +19,3 @@ database_url = 'mysql+pymysql://{user}:{password}@localhost:3306/{database_name}
 # engine = create_engine(database_url)
 # df = pd.read_sql('SELECT * FROM table_name', con=engine)
 
-class UploadFile(models.Model):
-    file = models.FileField()
-
-    def __str__(self):
-        return self.file
