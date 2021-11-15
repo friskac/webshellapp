@@ -13,10 +13,17 @@
         {% csrf_token %}
         <label for="upload">Upload File</label>
         <input type="file" name="file" />
-        <input type="submit" name="" id="" />
+        <input type="submit" name="uploadfile" id="" />
+        <input type="submit" name="predict" />
       </form>
       {% if url %}
       <p>Uploaded file: <a href="{{ url }}">{{ url }}</a></p>
+      {% endif %} {% if akurasi %}
+      <p>akurasi: {{ akurasi }}</p>
+      <p>akurasi Decision Tree pada Data Test: {{ akurasiDataTest }}</p>
+      <p>
+        Hasil prediksi yang tepat adalah {{ Prediksi }} dari {{ totalData }}
+      </p>
       {% endif %}
     </center>
   </body>
