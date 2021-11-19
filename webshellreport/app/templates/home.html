@@ -34,6 +34,13 @@
       <div class="mt-3">
         <h3>FILTER</h3>
         <div class="container">
+          {% if akurasi %}
+          <p>akurasi: {{ akurasi }}</p>
+          <p>akurasi Decision Tree pada Data Test: {{ akurasiDataTest }}</p>
+          <p>
+            Hasil prediksi yang tepat adalah {{ Prediksi }} dari {{ totalData }}
+          </p>
+          {% endif %}
           <div class="row">
             <div class="col-sm">
               <label for="">Alamat IP : </label>
@@ -73,40 +80,25 @@
                 <th scope="col">Alamat IP</th>
                 <th scope="col">Waktu</th>
                 <th scope="col">Request</th>
-                <th scope="col">Kode HTTP</th>
+                <!-- <th scope="col">Kode HTTP</th> -->
                 <th scope="col">Ukuran</th>
                 <th scope="col">Referer</th>
                 <th scope="col">Browser</th>
                 <th scope="col">Webshell</th>
               </tr>
+              {% if data %} {% for i in data %}
               <tr>
-                <td scope="col">No.</td>
-                <td scope="col">Alamat IP</td>
-                <td scope="col">Waktu</td>
-                <td scope="col">GET /dvwa/vulnerabilities/upload/ HTTP/1.1</td>
-                <td scope="col">Kode HTTP</td>
-                <td scope="col">Ukuran</td>
-                <td scope="col">Referer</td>
-                <td scope="col">
-                  Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML,
-                  like Gecko) Chrome/95.0.4613.0 Safari/537.36 Edg/95.0.1000.0
-                </td>
-                <td scope="col">Webshell</td>
+                <td scope="col">{{ forloop.counter }}</td>
+                <td scope="col">{{i.IP}}</td>
+                <td scope="col">{{i.Date}}</td>
+                <td scope="col">{{i.Request}}</td>
+                <!-- <td scope="col">{{i.kodeHTTP}}</td> -->
+                <td scope="col">{{i.Byte}}</td>
+                <td scope="col">{{i.Referer}}</td>
+                <td scope="col">{{i.Browser}}</td>
+                <td scope="col">{{i.JenisWebshell}}</td>
               </tr>
-              <tr>
-                <td scope="col">No.</td>
-                <td scope="col">Alamat IP</td>
-                <td scope="col">Waktu</td>
-                <td scope="col">GET /dvwa/vulnerabilities/upload/ HTTP/1.1</td>
-                <td scope="col">Kode HTTP</td>
-                <td scope="col">Ukuran</td>
-                <td scope="col">Referer</td>
-                <td scope="col">
-                  Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML,
-                  like Gecko) Chrome/95.0.4613.0 Safari/537.36 Edg/95.0.1000.0
-                </td>
-                <td scope="col">Webshell</td>
-              </tr>
+              {% endfor %} {% endif %}
             </thead>
           </table>
         </div>

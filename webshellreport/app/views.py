@@ -1,20 +1,14 @@
+from os import name
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.core.files.storage import FileSystemStorage
-from app.models import WebshellDetector
+from app.models import WebshellDetector, Exporter
+import json
 
 # Create your views here.
 
-
-def sayHello(request):
-    return render(request, 'home.html')
-
-
-def landingPage(request):
-    return render(request, 'landingpage.html')
-
-
 wsd = WebshellDetector()
+predictor = ['Byte', 'PanjangParam', 'PHP', 'Percent', 'JenisWebshell']
 
 
 def upload_file(request):
@@ -28,19 +22,32 @@ def upload_file(request):
             # form = UploadForm(request.POST, request.FILES)
             # print(filelog)
             df = wsd.preprocess(fs.url(filelog))
-            wsd.makeTree(df)
-            name = wsd.exportTree(df)
+            wsd.makeTree(df[predictor])
+            name = wsd.exportTree(df[predictor])
             if name:
                 context['url'] = "media/traintree.png"
-        elif "predict" in request.POST:
-            df = wsd.preprocess("media/c99.log")
-            xtest, ypred = wsd.predict(df)
-            akurasi, akurasiDataTest, akurasiPrediksi, totalData = wsd.checkAccuracy(
-                df, ypred)
-            print(akurasiPrediksi)
-            context["akurasi"] = akurasi
-            context["akurasiDataTest"] = akurasiDataTest
-            context["Prediksi"] = akurasiPrediksi
-            context["totalData"] = totalData
 
     return render(request, 'upload.html', context)
+
+# /index
+
+
+def table(request):
+    exporter = Exporter()
+    context = {}
+    file = "media/access.log"
+    df = wsd.preprocess(file)
+    exporter.insertData(df)
+    xtest, ypred = wsd.predict(df[predictor])
+    akurasi, akurasiDataTest, akurasiPrediksi, totalData = wsd.checkAccuracy(
+        df[predictor], ypred)
+    print(akurasiPrediksi)
+    context["akurasi"] = akurasi
+    context["akurasiDataTest"] = akurasiDataTest
+    context["Prediksi"] = akurasiPrediksi
+    context["totalData"] = totalData
+    json_records = df.reset_index().to_json(orient='records')
+    data = []
+    data = json.loads(json_records)
+    context["data"] = data
+    return render(request, 'home.html', context)
