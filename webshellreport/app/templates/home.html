@@ -89,13 +89,13 @@
               {% if data %} {% for i in data %}
               <tr>
                 <td scope="col">{{ forloop.counter }}</td>
-                <td scope="col">{{i.IP}}</td>
+                <td scope="col">{{i.alamat_ip}}</td>
                 <td scope="col">{{i.Date}}</td>
-                <td scope="col">{{i.Request}}</td>
+                <td scope="col">{{i.request}}</td>
                 <!-- <td scope="col">{{i.kodeHTTP}}</td> -->
                 <td scope="col">{{i.Byte}}</td>
-                <td scope="col">{{i.Referer}}</td>
-                <td scope="col">{{i.Browser}}</td>
+                <td scope="col">{{i.referer}}</td>
+                <td scope="col">{{i.browser}}</td>
                 <td scope="col">{{i.JenisWebshell}}</td>
               </tr>
               {% endfor %} {% endif %}

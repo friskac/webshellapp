@@ -53,7 +53,6 @@ class WebshellDetector:
             'Byte': [],
             'Referer': [],
             'Browser': [],
-            # 'Parameter': [],
             'PanjangParam': [],
             'PHP': [],
             'Percent': [],
@@ -67,7 +66,6 @@ class WebshellDetector:
                 date1 = date[1]
                 date2 = date1.split("]")[0].replace("[", "")
                 date3 = self.cleanup_time(date2)
-                # print(date3)
                 request = i.split('"')[1]
                 byte = i.split('"')[2]
                 byte2 = byte.split(" ")[2]
@@ -82,7 +80,6 @@ class WebshellDetector:
                 log['Referer'].append(referer)
                 log['Browser'].append(browser)
                 jenis = "R57 atau WSO atau Tidak Ada"
-                # paramAksi = "tidak ada"
                 panjangParam = 0
                 php = 0
                 if '%' in request:
@@ -100,19 +97,15 @@ class WebshellDetector:
                     if "image=" in param or "action=" in param:
                         # webadmin
                         jenis = "webadmin"
-                        # paramAksi = "image= atau action="
                     elif "act=" in param or "%2C" in param:
                         # c99
                         jenis = "c99"
-                        # paramAksi = "act="
                     elif "|" in param or "!" in param or "-" in param:
                         # b374k
                         jenis = "b374k"
-                        # paramAksi = "| atau !"
                 else:
                     # R57 atau WSO atau Tidak Ada
-                    jenis = 0
-                # log['Parameter'].append(paramAksi)
+                    jenis = "R57 atau WSO atau Tidak Ada"
                 log['PanjangParam'].append(panjangParam)
                 log['PHP'].append(php)
                 log['Percent'].append(percent)
@@ -187,7 +180,20 @@ class Exporter(models.Model):
             res = con.execute(query, jenisWebshell)
             idWebshell = res.fetchone()[0]
             df.loc[i, "JenisWebshell"] = idWebshell
-            print(df.loc[i])
+            # print(df.loc[i])
             sql = "INSERT INTO `Log` (`alamat_ip`, `date`, `request`, `byte`, `referer`, `browser`,`panjang_param`,`php`,`percent`, `idW`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
             con.execute(sql, df.loc[i])
         con.close()
+
+    def getData(self):
+        con = engine.connect()
+        query = "SELECT `alamat_ip`, CAST(`date` AS CHAR) AS 'Date', `request`, `byte` AS 'Byte', `referer`, `browser`, `panjang_param` AS 'PanjangParam',`php` AS 'PHP',`percent` AS 'Percent', `JenisWebshell` FROM `Log` INNER JOIN `Webshell` ON `Log`.`idW` = `Webshell`.`idWebshell`"
+        # res = con.execute(query)
+        df = pd.read_sql_query(query, con)
+        print(df)
+        return df
+
+# class GetData(models.Model):
+#     def showData(self):
+#
+#

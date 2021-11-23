@@ -7,6 +7,8 @@ import json
 
 # Create your views here.
 
+
+exporter = Exporter()
 wsd = WebshellDetector()
 predictor = ['Byte', 'PanjangParam', 'PHP', 'Percent', 'JenisWebshell']
 
@@ -22,10 +24,11 @@ def upload_file(request):
             # form = UploadForm(request.POST, request.FILES)
             # print(filelog)
             df = wsd.preprocess(fs.url(filelog))
+            print(df[predictor])
             wsd.makeTree(df[predictor])
             name = wsd.exportTree(df[predictor])
             if name:
-                context['url'] = "media/traintree.png"
+                context['url'] = "/app/media/traintree.png"
 
     return render(request, 'upload.html', context)
 
@@ -33,21 +36,28 @@ def upload_file(request):
 
 
 def table(request):
-    exporter = Exporter()
     context = {}
-    file = "media/access.log"
-    df = wsd.preprocess(file)
-    exporter.insertData(df)
+    # file = "media/access.log"
+    # df = wsd.preprocess(file)
+    df = exporter.getData()
+
+    # print(df[predictor])
     xtest, ypred = wsd.predict(df[predictor])
     akurasi, akurasiDataTest, akurasiPrediksi, totalData = wsd.checkAccuracy(
         df[predictor], ypred)
-    print(akurasiPrediksi)
+    # print(akurasiPrediksi)
     context["akurasi"] = akurasi
     context["akurasiDataTest"] = akurasiDataTest
     context["Prediksi"] = akurasiPrediksi
     context["totalData"] = totalData
-    json_records = df.reset_index().to_json(orient='records')
+
+    json_records = df.to_json(orient='records', date_format="iso")
     data = []
     data = json.loads(json_records)
     context["data"] = data
     return render(request, 'home.html', context)
+
+
+file = "media/access.log"
+df = wsd.preprocess(file)
+exporter.insertData(df)
