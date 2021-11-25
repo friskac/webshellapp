@@ -1,6 +1,7 @@
 from django.db import connection, models, transaction
 from django.conf import settings
 from django.db.models.base import Model
+# import django_filter
 from numpy import dtype, mod
 import pandas as pd
 from sklearn import metrics
@@ -43,7 +44,6 @@ class WebshellDetector:
         self.dt = DecisionTreeClassifier(criterion="entropy")
 
     def preprocess(self, file):
-        print(file)
         f = open(file, "r")
         percent = 0
         log = {
@@ -128,13 +128,12 @@ class WebshellDetector:
         return self.dt.fit(xTrain, yTrain)
 
     def checkAccuracy(self, df, yPred):
-        df.loc[df.sample(frac=random.uniform(0, 0.1)).index,
-               'JenisWebshell'] = "c99"
+        # df.loc[df.sample(frac=random.uniform(0, 0.1)).index,
+        #        'JenisWebshell'] = "c99"
         yTest = df.iloc[:, -1]
         akurasi = accuracy_score(yTest, yPred)
         akurasiDataTest = self.dt.score(df.iloc[:, :4], yTest)
         akurasiPrediksi = accuracy_score(yTest, yPred, normalize=False)
-        print(accuracy_score(yTest, yPred, normalize=False))
         return akurasi, akurasiDataTest, akurasiPrediksi, len(yTest)
 
     def predict(self, df):
@@ -165,13 +164,6 @@ class Exporter(models.Model):
     # ref = models.CharField(max_length=300)
     # browser = models.CharField(max_length=300)
     # webshell = models.CharField(max_length=30)
-
-    # connection = pymysql.connect(
-    #     host='localhost',
-    #     user='root',
-    #     password='mikLovers*19',
-    #     db='webshell_data'
-    # )
     def insertData(self, df):
         con = engine.connect()
         for i, row in df.iterrows():
@@ -185,15 +177,14 @@ class Exporter(models.Model):
             con.execute(sql, df.loc[i])
         con.close()
 
-    def getData(self):
+    def getData(self, filter):
         con = engine.connect()
         query = "SELECT `alamat_ip`, CAST(`date` AS CHAR) AS 'Date', `request`, `byte` AS 'Byte', `referer`, `browser`, `panjang_param` AS 'PanjangParam',`php` AS 'PHP',`percent` AS 'Percent', `JenisWebshell` FROM `Log` INNER JOIN `Webshell` ON `Log`.`idW` = `Webshell`.`idWebshell`"
+        if len(filter) > 0:
+            query += " WHERE "
+            if "id" in filter:
+                print(filter['id'])
+                query += "`Log`.`idW` = " + filter["id"]
         # res = con.execute(query)
         df = pd.read_sql_query(query, con)
-        print(df)
         return df
-
-# class GetData(models.Model):
-#     def showData(self):
-#
-#

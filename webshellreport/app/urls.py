@@ -4,7 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('index/', views.table),
+    path('index/', views.table, name="home"),
     path('upload/', views.upload_file),
 ]
 

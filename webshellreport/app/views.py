@@ -1,4 +1,5 @@
 from os import name
+import re
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.core.files.storage import FileSystemStorage
@@ -24,7 +25,6 @@ def upload_file(request):
             # form = UploadForm(request.POST, request.FILES)
             # print(filelog)
             df = wsd.preprocess(fs.url(filelog))
-            print(df[predictor])
             wsd.makeTree(df[predictor])
             name = wsd.exportTree(df[predictor])
             if name:
@@ -34,12 +34,19 @@ def upload_file(request):
 
 # /index
 
+# /template
+
 
 def table(request):
     context = {}
+    filter = {}
+    if "webshell" in request.GET:
+        idW = request.GET["webshell"]
+        if idW != "Semua":
+            filter["id"] = idW
     # file = "media/access.log"
     # df = wsd.preprocess(file)
-    df = exporter.getData()
+    df = exporter.getData(filter)
 
     # print(df[predictor])
     xtest, ypred = wsd.predict(df[predictor])

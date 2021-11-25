@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" />
+  <!-- <link rel="stylesheet" href="/style/color.css" /> -->
+  <title>Document</title>
+</head>
+
+<body class="bg">
+  <div class="container mt-5">
+    <h1>WEBSHELL DETECTION REPORT</h1>
+    <div class="mt-3">
+      <h3>FILTER</h3>
+      <div class="container mt-5">
+        <div class="row">
+          <div class="col-sm">
+            <label for="">Alamat IP : </label>
+            <input type="text" name="" id="" />
+          </div>
+          <div class="col-sm d-flex">
+            <label for="">Waktu (Bulan) : </label>
+            <div class="dropdown">
+              <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Semua Bulan
+              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="#">Januari</a>
+                <a class="dropdown-item" href="#">Februari</a>
+                <a class="dropdown-item" href="#">Maret</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm">
+            <form id="task-form">
+              <label for="">Webshell : </label>
+              <select name="webshell" id="webshell">
+                <option value="Semua">Semua</option>
+                <option value="2">Webadmin</option>
+                <option value="3">C99</option>
+                <option value="1">WSO</option>
+                <option value="1">R57</option>
+                <option value="4">B374K</option>
+              </select>
+              <input type="button" value="Submit">
+            </form>
+          </div>
+          {% block content %} {% endblock %}
+        </div>
+      </div>
+    </div>
+</body>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+  integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+  integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+  integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+  crossorigin="anonymous"></script>
+<script type="text/javascript">
+  $(document).on('click', '#task-form', function (e) {
+    e.preventDefault();
+    let webshell = $('#webshell').val();
+    let filters = '?';
+    if (webshell !== '') {
+      filters += `webshell=${webshell}`
+    }
+    window.location.replace(`http://127.0.0.1:8000/app/index/${filters}`);
+  });
+</script>
+
+</html>
