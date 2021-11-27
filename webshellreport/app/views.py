@@ -42,29 +42,43 @@ def table(request):
     filter = {}
     if "webshell" in request.GET:
         idW = request.GET["webshell"]
+        try:
+            ip = request.GET["alamatip"]
+        except:
+            ip = ''
+        try:
+            waktu = request.GET["waktu"]
+        except:
+            waktu = ''
         if idW != "Semua":
             filter["id"] = idW
+        if ip != "":
+            filter["ip"] = ip
+        if waktu != "":
+            filter["waktu"] = waktu
     # file = "media/access.log"
     # df = wsd.preprocess(file)
     df = exporter.getData(filter)
-
-    # print(df[predictor])
-    xtest, ypred = wsd.predict(df[predictor])
-    akurasi, akurasiDataTest, akurasiPrediksi, totalData = wsd.checkAccuracy(
-        df[predictor], ypred)
-    # print(akurasiPrediksi)
-    context["akurasi"] = akurasi
-    context["akurasiDataTest"] = akurasiDataTest
-    context["Prediksi"] = akurasiPrediksi
-    context["totalData"] = totalData
-
-    json_records = df.to_json(orient='records', date_format="iso")
     data = []
-    data = json.loads(json_records)
+    if (len(df) != 0):
+        list_ip = exporter.exportIP()
+        xtest, ypred = wsd.predict(df[predictor])
+        akurasi, akurasiDataTest, akurasiPrediksi, totalData = wsd.checkAccuracy(
+            df[predictor], ypred)
+        df["hasil"] = ypred
+        context["akurasi"] = akurasi
+        context["akurasiDataTest"] = "{:.2f}".format(akurasiDataTest*100)
+        context["Prediksi"] = akurasiPrediksi
+        context["totalData"] = totalData
+        json_ip = list_ip.to_json(orient='records')
+        context["listIp"] = json.loads(json_ip)
+
+        json_records = df.to_json(orient='records', date_format="iso")
+        data = json.loads(json_records)
     context["data"] = data
     return render(request, 'home.html', context)
 
 
-file = "media/access.log"
+file = "media/webadmin.log"
 df = wsd.preprocess(file)
 exporter.insertData(df)

@@ -5,8 +5,9 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
   <!-- <link rel="stylesheet" href="/style/color.css" /> -->
   <title>Document</title>
 </head>
@@ -17,29 +18,28 @@
     <div class="mt-3">
       <h3>FILTER</h3>
       <div class="container mt-5">
-        <div class="row">
-          <div class="col-sm">
-            <label for="">Alamat IP : </label>
-            <input type="text" name="" id="" />
-          </div>
-          <div class="col-sm d-flex">
-            <label for="">Waktu (Bulan) : </label>
-            <div class="dropdown">
-              <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Semua Bulan
-              </button>
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" href="#">Januari</a>
-                <a class="dropdown-item" href="#">Februari</a>
-                <a class="dropdown-item" href="#">Maret</a>
+        <form id="task-form">
+          <div class="row">
+            <div class="col-sm-3 d-flex align-items-center">
+              <label for="alamatIp" class="col-sm-4 col-form-label">Alamat IP : </label>
+              <input type="text" aria-label="listip" class="form-control" list="listIPWebshell" placeholder="IP Address"
+                name="listip" id="listip">
+              <datalist id="listIPWebshell">
+                {% for i in listIp %}
+                <option value={{i.alamat_ip}}>{{i.alamat_ip}}</option>
+                {% endfor %}
+              </datalist>
+            </div>
+            <div class="col-sm-6 d-flex align-items-center"">
+              <label for="waktu" class="col-sm-4 col-form-label">Waktu (Bulan) : </label>
+              <div class="dropdown">
+                <input type="text" class="form-control" name="datetimes" id="datetimes"
+                  placeholder="Pilih rentang waktu" value="" />
               </div>
             </div>
-          </div>
-          <div class="col-sm">
-            <form id="task-form">
-              <label for="">Webshell : </label>
-              <select name="webshell" id="webshell">
+            <div class="col-sm-3 d-flex align-items-center"">
+              <label for="webshell" class="col-sm-4 col-form-label">Webshell : </label>
+              <select name="webshell" id="webshell" class="form-control">
                 <option value="Semua">Semua</option>
                 <option value="2">Webadmin</option>
                 <option value="3">C99</option>
@@ -47,32 +47,71 @@
                 <option value="1">R57</option>
                 <option value="4">B374K</option>
               </select>
-              <input type="button" value="Submit">
-            </form>
+            </div>
           </div>
-          {% block content %} {% endblock %}
-        </div>
+            <div class="mt-3 float-end">
+              <input type="submit" class="btn btn-success" value="Submit">
+            </div>
+        </form>
+        {% block content %} {% endblock %}
       </div>
     </div>
 </body>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-  integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-  integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
-  integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
-  crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script type="text/javascript">
-  $(document).on('click', '#task-form', function (e) {
-    e.preventDefault();
-    let webshell = $('#webshell').val();
-    let filters = '?';
-    if (webshell !== '') {
-      filters += `webshell=${webshell}`
-    }
-    window.location.replace(`http://127.0.0.1:8000/app/index/${filters}`);
-  });
+  $(document).ready(function () {
+    $('#task-form').on('submit', function (e) {
+      e.preventDefault();
+      let webshell = $('#webshell').val();
+      let alamatIp = $('#listip').val();
+      let waktu = $('#datetimes').val();
+      let filters = '?';
+      if (webshell !== '') {
+        filters += `webshell=${webshell}`
+      }
+      if (alamatIp !== '') {
+        filters += `&alamatip=${alamatIp}`;
+      }
+      if (waktu !== '') {
+        filters += `&waktu=${waktu}`;
+      }
+      window.location.replace(`http://127.0.0.1:8000/app/index/${filters}`);
+    });
+
+    $(function () {
+      $('input[name="datetimes"]').daterangepicker({
+        showDropdowns: true,
+        autoUpdateInput: false,
+        timePicker: true,
+        timePicker24Hour: true,
+        locale: {
+          cancelLabel: "Clear",
+        },
+      });
+
+      $('input[name="datetimes"]').on(
+        "apply.daterangepicker",
+        function (ev, picker) {
+          $(this).val(
+            picker.startDate.format("DD MMM YYYY HH:mm") +
+            " - " +
+            picker.endDate.format("DD MMM YYYY HH:mm")
+          );
+        }
+      );
+
+      $('input[name="datetimes"]').on(
+        "cancel.daterangepicker",
+        function (ev, picker) {
+          $(this).val("");
+        }
+      );
+    });
+  })
 </script>
 
 </html>

@@ -20,6 +20,8 @@ from django.core.files.storage import FileSystemStorage
 import datetime
 import random
 
+from sqlalchemy.sql.expression import false, true
+
 # Create your models here.
 
 user = settings.DATABASES['default']['USER']
@@ -128,8 +130,8 @@ class WebshellDetector:
         return self.dt.fit(xTrain, yTrain)
 
     def checkAccuracy(self, df, yPred):
-        # df.loc[df.sample(frac=random.uniform(0, 0.1)).index,
-        #        'JenisWebshell'] = "c99"
+        df.loc[df.sample(frac=random.uniform(0, 0.1)).index,
+               'JenisWebshell'] = "c99"
         yTest = df.iloc[:, -1]
         akurasi = accuracy_score(yTest, yPred)
         akurasiDataTest = self.dt.score(df.iloc[:, :4], yTest)
@@ -182,9 +184,37 @@ class Exporter(models.Model):
         query = "SELECT `alamat_ip`, CAST(`date` AS CHAR) AS 'Date', `request`, `byte` AS 'Byte', `referer`, `browser`, `panjang_param` AS 'PanjangParam',`php` AS 'PHP',`percent` AS 'Percent', `JenisWebshell` FROM `Log` INNER JOIN `Webshell` ON `Log`.`idW` = `Webshell`.`idWebshell`"
         if len(filter) > 0:
             query += " WHERE "
-            if "id" in filter:
-                print(filter['id'])
-                query += "`Log`.`idW` = " + filter["id"]
+            firstFilter = True
+            for key in filter:
+                if not firstFilter:
+                    query += ' AND '
+                if key == "id":
+                    query += "`Log`.`idW` = " + filter["id"]
+                elif key == "ip":
+                    query += "`Log`.`alamat_ip` = '" + filter["ip"] + "'"
+                elif key == "waktu":
+                    startVal = filter["waktu"].split(" - ")[0]
+                    endVal = filter["waktu"].split(" - ")[1]
+                    startDate = startVal.split(" ")[0]
+                    startMonth = month_map[startVal.split(" ")[1]]
+                    startYear = startVal.split(" ")[2]
+                    startTime = startVal.split(" ")[3]
+                    endDate = endVal.split(" ")[0]
+                    endMonth = month_map[endVal.split(" ")[1]]
+                    endYear = endVal.split(" ")[2]
+                    endTime = endVal.split(" ")[3]
+                    start = str(startYear) + "-" + str(startMonth) + "-" + str(startDate) + " " + str(startTime)
+                    end = str(endYear) + "-" + str(endMonth) + "-" + str(endDate) + " " + str(endTime)
+                    query += "`Log`.`date` BETWEEN '" + start + "' AND '" + end + "'"
+                firstFilter = False
+        print(query)
         # res = con.execute(query)
         df = pd.read_sql_query(query, con)
         return df
+
+    def exportIP(self):
+        con = engine.connect()
+        query = "SELECT DISTINCT(`Log`.`alamat_ip`) FROM `Log`"
+        list_ip = pd.read_sql_query(query, con)
+        con.close()
+        return list_ip

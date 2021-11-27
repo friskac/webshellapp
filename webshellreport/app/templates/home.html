@@ -1,8 +1,9 @@
 {% extends 'template.html' %} {% block content %}
 <div class="container">
   {% if akurasi %}
-  <p>akurasi: {{ akurasi }}</p>
-  <p>akurasi Decision Tree pada Data Test: {{ akurasiDataTest }}</p>
+  <p class="mt-3">
+    Akurasi Decision Tree pada Data Test: {{ akurasiDataTest }}%
+  </p>
   <p>Hasil prediksi yang tepat adalah {{ Prediksi }} dari {{ totalData }}</p>
   {% endif %}
   <div class="table-responsive mt-3">
@@ -16,10 +17,13 @@
           <!-- <th scope="col">Kode HTTP</th> -->
           <th scope="col">Ukuran</th>
           <th scope="col">Referer</th>
-          <th scope="col">Browser</th>
-          <th scope="col">Webshell</th>
+          <th scope="col">Hasil Prediksi</th>
+          <th scope="col">Hasil Preprocess</th>
         </tr>
-        {% if data %} {% for i in data %}
+      </thead>
+      {% if data %}
+      <tbody>
+        {% for i in data %}
         <tr>
           <td scope="col">{{ forloop.counter }}</td>
           <td scope="col">{{i.alamat_ip}}</td>
@@ -28,12 +32,15 @@
           <!-- <td scope="col">{{i.kodeHTTP}}</td> -->
           <td scope="col">{{i.Byte}}</td>
           <td scope="col">{{i.referer}}</td>
-          <td scope="col">{{i.browser}}</td>
+          <td scope="col">{{i.hasil}}</td>
           <td scope="col">{{i.JenisWebshell}}</td>
         </tr>
-        {% endfor %} {% endif %}
-      </thead>
+      </tbody>
+      {% endfor %} {% endif %}
     </table>
+    {% if data %} {% else %}
+    <p class="text-center">Tidak ada data</p>
+    {% endif %}
   </div>
 </div>
 {% endblock %}
