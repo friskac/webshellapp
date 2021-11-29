@@ -1,23 +1,23 @@
 {% extends 'template.html' %} {% block content %}
 <div class="container">
   {% if akurasi %}
-  <p class="mt-3">
+  <p>
     Akurasi Decision Tree pada Data Test: {{ akurasiDataTest }}%
   </p>
   <p>Hasil prediksi yang tepat adalah {{ Prediksi }} dari {{ totalData }}</p>
   {% endif %}
-  <div class="table-responsive mt-3">
-    <table class="table">
-      <thead>
+  <div class="table-responsive text-middle mt-3">
+    <table class="table table-hover align-middle table-bordered" style="background-color: #D7E9F7;">
+      <thead class="table-secondary align-middle ">
         <tr>
           <th scope="col">No.</th>
           <th scope="col">Alamat IP</th>
           <th scope="col">Waktu</th>
-          <th scope="col">Request</th>
+          <th scope="col" >Request</th>
           <!-- <th scope="col">Kode HTTP</th> -->
           <th scope="col">Ukuran</th>
           <th scope="col">Referer</th>
-          <th scope="col">Hasil Prediksi</th>
+          <th scope="col" >Hasil Prediksi</th>
           <th scope="col">Hasil Preprocess</th>
         </tr>
       </thead>
@@ -25,15 +25,15 @@
       <tbody>
         {% for i in data %}
         <tr>
-          <td scope="col">{{ forloop.counter }}</td>
-          <td scope="col">{{i.alamat_ip}}</td>
-          <td scope="col">{{i.Date}}</td>
-          <td scope="col">{{i.request}}</td>
+          <th scope="row">{{ forloop.counter }}</th>
+          <td >{{i.alamat_ip}}</td>
+          <td>{{i.Date}}</td>
+          <td>{{i.request}}</td>
           <!-- <td scope="col">{{i.kodeHTTP}}</td> -->
-          <td scope="col">{{i.Byte}}</td>
-          <td scope="col">{{i.referer}}</td>
-          <td scope="col">{{i.hasil}}</td>
-          <td scope="col">{{i.JenisWebshell}}</td>
+          <td>{{i.Byte}}</td>
+          <td>{{i.referer}}</td>
+          <td>{{i.hasil}}</td>
+          <td>{{i.JenisWebshell}}</td>
         </tr>
       </tbody>
       {% endfor %} {% endif %}
