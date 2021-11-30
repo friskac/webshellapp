@@ -4,7 +4,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.core.files.storage import FileSystemStorage
 from app.models import WebshellDetector, Exporter
-import json
+import json, paramiko
+from paramiko import sftp, sftp_client
 
 # Create your views here.
 
@@ -79,6 +80,17 @@ def table(request):
     return render(request, 'home.html', context)
 
 
-file = "media/webadmin.log"
-df = wsd.preprocess(file)
-exporter.insertData(df)
+# file = "media/webadmin.log"
+# df = wsd.preprocess(file)
+# exporter.insertData(df)
+
+client = paramiko.SSHClient()
+client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+client.connect("192.168.1.11", username="msfadmin", password="msfadmin")
+sftp_client = client.open_sftp()
+remote_file = sftp_client.open('/var/log/apache2/access.log')
+try:
+    df = wsd.preprocess(remote_file, "remote")
+    exporter.insertData(df)
+finally:
+    remote_file.close()

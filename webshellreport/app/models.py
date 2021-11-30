@@ -1,7 +1,7 @@
+import re
 from django.db import connection, models, transaction
 from django.conf import settings
 from django.db.models.base import Model
-# import django_filter
 from numpy import dtype, mod
 import pandas as pd
 from sklearn import metrics
@@ -45,8 +45,11 @@ class WebshellDetector:
     def __init__(self):
         self.dt = DecisionTreeClassifier(criterion="entropy")
 
-    def preprocess(self, file):
-        f = open(file, "r")
+    def preprocess(self, file, source="local"):
+        if source == "local":
+            f = open(file, "r")
+        else:
+            f = file    
         percent = 0
         log = {
             'IP': [],
@@ -95,23 +98,24 @@ class WebshellDetector:
                 if '?' in request:
                     param = request.split('?')[1]
                     panjangParam = len(param)
-                    # print(param)
+                #     # print(param)
                     if "image=" in param or "action=" in param:
-                        # webadmin
+                    # webadmin
                         jenis = "webadmin"
-                    elif "act=" in param or "%2C" in param:
+                    elif "act=" in param or "%2C" in param or "img=" in param:
                         # c99
                         jenis = "c99"
-                    elif "|" in param or "!" in param or "-" in param:
+                    elif "/upload" in request and ( "|" in param or "!" in param or "-" in param):
                         # b374k
                         jenis = "b374k"
                 else:
                     # R57 atau WSO atau Tidak Ada
                     jenis = "R57 atau WSO atau Tidak Ada"
-                log['PanjangParam'].append(panjangParam)
-                log['PHP'].append(php)
-                log['Percent'].append(percent)
-                log['JenisWebshell'].append(jenis)
+            log['PanjangParam'].append(panjangParam)
+            log['PHP'].append(php)
+            log['Percent'].append(percent)
+            log['JenisWebshell'].append(jenis)
+                    
 
         df = pd.DataFrame(log)
         # data = ['Byte', 'PanjangParam', 'PHP', 'Percent', 'JenisWebshell']
@@ -127,11 +131,12 @@ class WebshellDetector:
     def makeTree(self, df):
         xTrain = df.iloc[:, :4]
         yTrain = df.iloc[:, -1]
+        print(xTrain)
         return self.dt.fit(xTrain, yTrain)
 
     def checkAccuracy(self, df, yPred):
-        df.loc[df.sample(frac=random.uniform(0, 0.1)).index,
-               'JenisWebshell'] = "c99"
+        # df.loc[df.sample(frac=random.uniform(0, 0.1)).index,
+        #        'JenisWebshell'] = "c99"
         yTest = df.iloc[:, -1]
         akurasi = accuracy_score(yTest, yPred)
         akurasiDataTest = self.dt.score(df.iloc[:, :4], yTest)
