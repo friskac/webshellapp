@@ -9,5 +9,16 @@ pip3 install pipenv
 pip3 install mysql-connector-python
 pip3 install SQLAlchemy
 
+buat file baru secrets.json setara dengan installation.txt ini, isinya:
+{
+    "DB_NAME" : "webshell_data",
+    "DB_USERNAME" : "root",
+    "DB_PASSWORD" : "passworddd",
+    "SFTP_CLIENT" : "192.168.1.11",
+    "SFTP_USERNAME" : "msfadmin",
+    "SFTP_PASSWORD" : "msfadmin",
+    "SFTP_FILEPATH" : "/var/log/apache2/access.log"
+}
+
 page 1 : 127.0.0.1:8000/app/upload/
 page 2 : 127.0.0.1:8000/app/index/
