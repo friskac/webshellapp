@@ -1,0 +1,13 @@
+pip3 install Django==3.0.2
+pip3 install Django
+pip3 install pandas
+pip3 install -U scikit-learn
+pip3 install pandas sklearn.tree
+pip3 install graphviz
+pip3 install pydotplus
+pip3 install pipenv
+pip3 install mysql-connector-python
+pip3 install SQLAlchemy
+
+page 1 : 127.0.0.1:8000/app/upload/
+page 2 : 127.0.0.1:8000/app/index/

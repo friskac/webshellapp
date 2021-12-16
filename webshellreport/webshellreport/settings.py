@@ -10,11 +10,21 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
-import os
+import os, json
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+with open(os.path.join(BASE_DIR, 'webshellreport/secrets.json')) as secrets_file:
+    secrets = json.load(secrets_file)
+
+def get_secret(setting, secrets=secrets):
+    """Get secret setting or fail with ImproperlyConfigured"""
+    try:
+        return secrets[setting]
+    except KeyError:
+        raise ImproperlyConfigured("Set the {} setting".format(setting))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -78,14 +88,23 @@ WSGI_APPLICATION = 'webshellreport.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'webshell_data',
-        'USER': 'root',
-        'PASSWORD': 'mikLovers*19',
+        'NAME': get_secret("DB_NAME"),
+        'USER': get_secret("DB_USERNAME"),
+        'PASSWORD': get_secret("DB_PASSWORD"),
         'HOST': '',
         'PORT': '',
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
         }
+    }
+}
+
+CLIENT = {
+    'default': {
+        'NAME': get_secret("SFTP_CLIENT"),
+        'USER': get_secret("SFTP_USERNAME"),
+        'PASSWORD': get_secret("SFTP_PASSWORD"),
+        'FILEPATH': get_secret("SFTP_FILEPATH"),
     }
 }
 

@@ -1,26 +1,14 @@
 import re
-from django.db import connection, models, transaction
+from django.db import models
 from django.conf import settings
-from django.db.models.base import Model
-from numpy import dtype, mod
 import pandas as pd
-from sklearn import metrics
-from sklearn import tree
-from sqlalchemy import create_engine, text
-import mysql.connector
-import pymysql
+from sqlalchemy import create_engine
 from sklearn.tree import export_graphviz
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 import pydotplus
-from dateutil import parser
-
-from django.core.files.storage import FileSystemStorage
 import datetime
-import random
-
-from sqlalchemy.sql.expression import false, true
 
 # Create your models here.
 
@@ -75,7 +63,7 @@ class WebshellDetector:
                 byte = i.split('"')[2]
                 byte2 = byte.split(" ")[2]
                 if byte2 == "-":
-                    continue
+                    byte2 = 0
                 referer = i.split('"')[3]
                 browser = i.split('"')[5]
                 log['IP'].append(ip)
@@ -163,14 +151,6 @@ class WebshellDetector:
 
 
 class Exporter(models.Model):
-    # ip = models.CharField(max_length=20)
-    # date = models.DateField()
-    # req = models.CharField(max_length=300)
-    # kode = models.IntegerField()
-    # byte = models.BigIntegerField()
-    # ref = models.CharField(max_length=300)
-    # browser = models.CharField(max_length=300)
-    # webshell = models.CharField(max_length=30)
     def insertData(self, df):
         con = engine.connect()
         for i, row in df.iterrows():

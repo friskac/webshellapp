@@ -1,11 +1,10 @@
-from os import name
-import re
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.core.files.storage import FileSystemStorage
 from app.models import WebshellDetector, Exporter
 import json, paramiko
 from paramiko import sftp, sftp_client
+from django.conf import settings
 
 # Create your views here.
 
@@ -84,11 +83,16 @@ def table(request):
 # df = wsd.preprocess(file)
 # exporter.insertData(df)
 
+user = settings.CLIENT['default']['USER']
+password = settings.CLIENT['default']['PASSWORD']
+clientIP = settings.CLIENT['default']['NAME']
+filePath = settings.CLIENT['default']['FILEPATH']
+
 client = paramiko.SSHClient()
 client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-client.connect("192.168.1.11", username="msfadmin", password="msfadmin")
+client.connect(clientIP, username=user, password=password)
 sftp_client = client.open_sftp()
-remote_file = sftp_client.open('/var/log/apache2/access.log')
+remote_file = sftp_client.open(filePath)
 try:
     df = wsd.preprocess(remote_file, "remote")
     exporter.insertData(df)
