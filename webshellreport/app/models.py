@@ -192,6 +192,7 @@ class Exporter(models.Model):
                     end = str(endYear) + "-" + str(endMonth) + "-" + str(endDate) + " " + str(endTime)
                     query += "`Log`.`date` BETWEEN '" + start + "' AND '" + end + "'"
                 firstFilter = False
+        query += " ORDER BY `Log`.`date` ASC"
         print(query)
         # res = con.execute(query)
         df = pd.read_sql_query(query, con)
