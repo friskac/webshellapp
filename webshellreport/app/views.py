@@ -32,11 +32,6 @@ def upload_file(request):
 
     return render(request, 'upload.html', context)
 
-# /index
-
-# /template
-
-
 def table(request):
     context = {}
     filter = {}
@@ -79,22 +74,22 @@ def table(request):
     return render(request, 'home.html', context)
 
 
-# file = "media/webadmin.log"
-# df = wsd.preprocess(file)
+# file = "media/ssl_access_log"
+# df = wsd.preprocess(file, "local")
 # exporter.insertData(df)
 
-user = settings.CLIENT['default']['USER']
-password = settings.CLIENT['default']['PASSWORD']
-clientIP = settings.CLIENT['default']['NAME']
-filePath = settings.CLIENT['default']['FILEPATH']
+# user = settings.CLIENT['default']['USER']
+# password = settings.CLIENT['default']['PASSWORD']
+# clientIP = settings.CLIENT['default']['NAME']
+# filePath = settings.CLIENT['default']['FILEPATH']
 
-client = paramiko.SSHClient()
-client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-client.connect(clientIP, username=user, password=password)
-sftp_client = client.open_sftp()
-remote_file = sftp_client.open(filePath)
-try:
-    df = wsd.preprocess(remote_file, "remote")
-    exporter.insertData(df)
-finally:
-    remote_file.close()
+# client = paramiko.SSHClient()
+# client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+# client.connect(clientIP, username=user, password=password)
+# sftp_client = client.open_sftp()
+# remote_file = sftp_client.open(filePath)
+# try:
+#     df = wsd.preprocess(remote_file, "remote")
+#     exporter.insertData(df)
+# finally:
+#     remote_file.close()

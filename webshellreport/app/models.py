@@ -51,6 +51,15 @@ class WebshellDetector:
             'Percent': [],
             'JenisWebshell': []
         }
+                # byte3 = byte2
+                # if '\n' in byte3:
+                #     byte3 = byte2.replace('\n', '') 
+                # # if len(referer) < 4:
+                #     referer2 = "-"
+                #     browser2 = "-"
+                # else:
+                    # referer2 = referer[3]
+                    # browser2 = browser[5]
         # try:
         for i in f:
             ip = i.split(" - - ")[0]
@@ -103,13 +112,7 @@ class WebshellDetector:
             log['PHP'].append(php)
             log['Percent'].append(percent)
             log['JenisWebshell'].append(jenis)
-                    
-
         df = pd.DataFrame(log)
-        # data = ['Byte', 'PanjangParam', 'PHP', 'Percent', 'JenisWebshell']
-        # print(df[data])
-        # df.to_sql('Log2', con=engine)
-        # engine.execute("SELECT * FROM Log").fetchall()
         return df
 
     def cleanup_time(self, time):
@@ -160,13 +163,13 @@ class Exporter(models.Model):
             idWebshell = res.fetchone()[0]
             df.loc[i, "JenisWebshell"] = idWebshell
             # print(df.loc[i])
-            sql = "INSERT INTO `Log` (`alamat_ip`, `date`, `request`, `byte`, `referer`, `browser`,`panjang_param`,`php`,`percent`, `idW`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            sql = "INSERT INTO `Log` (`alamat_ip`, `date`, `request`, `byte`, `referer`, `browser`,`panjang_param`,`is_php`,`is_percent`, `idW`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
             con.execute(sql, df.loc[i])
         con.close()
 
     def getData(self, filter):
         con = engine.connect()
-        query = "SELECT `alamat_ip`, CAST(`date` AS CHAR) AS 'Date', `request`, `byte` AS 'Byte', `referer`, `browser`, `panjang_param` AS 'PanjangParam',`php` AS 'PHP',`percent` AS 'Percent', `JenisWebshell` FROM `Log` INNER JOIN `Webshell` ON `Log`.`idW` = `Webshell`.`idWebshell`"
+        query = "SELECT `alamat_ip`, CAST(`date` AS CHAR) AS 'Date', `request`, `byte` AS 'Byte', `panjang_param` AS 'PanjangParam',`is_php` AS 'PHP',`is_percent` AS 'Percent', `JenisWebshell` FROM `Log` INNER JOIN `Webshell` ON `Log`.`idW` = `Webshell`.`idWebshell`"
         if len(filter) > 0:
             query += " WHERE "
             firstFilter = True
